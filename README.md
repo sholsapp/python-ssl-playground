@@ -28,12 +28,20 @@ openssl s_client \
   -cert playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.cert \
   -key playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.key
   -CAfile playground/data/RED-ca-bundle.crt \
+  -crlf
+```
+
+Note, you'll have to send a request to get a resource for the client
+certificate to be requested. To do this, type the following into the prompt.
+
+```bash
+GET /debug HTTP/1.1
 ```
 
 ### problems 
 
-- Doesn't appear that client certificate is asked for from server even when run
-  with CERTS_REQUIRED.
+- None -- works perfectly.
+
 
 ## wget
 
