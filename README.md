@@ -16,6 +16,10 @@ those provided in the config directory or write your own by referring to the
 ```
 # tests
 
+The following is a survey of several common tools used to interact with systems
+that use TLS/SSL regarding how they fair when using gunicorn as the TLS/SSL
+termination point.
+
 ## openssl
 
 ```bash
