@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask, jsonify, request
 
 
@@ -5,9 +7,14 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def hello_world():
+def index():
+  print 'GOOD'
+  return 'GOOD'
+
+
+@app.route('/debug')
+def debug():
     s = request.environ['gunicorn.socket']
-    print dir(s)
     print 'Is secure: %s' % request.is_secure
     print 'Cert reqs: %s' % s.cert_reqs
     print 'SSL version: %s' % s.ssl_version
@@ -20,4 +27,5 @@ def hello_world():
 
 
 if __name__ == '__main__':
-    app.run()
+  logging.info('Starting the server!')
+  app.run()

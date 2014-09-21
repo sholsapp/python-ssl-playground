@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 
+import logging
+
 from flask.ext.script import Manager, Command, Option
 
 from playground import app
+
+
+logging.basicConfig(level=logging.INFO)
 
 
 class GunicornServer(Command):
