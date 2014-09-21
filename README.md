@@ -16,18 +16,46 @@ those provided in the config directory or write your own by referring to the
 ```
 # tests
 
+## openssl
+
+```bash
+openssl s_client \
+  -connect 0.0.0.0:8000 \
+  -cert playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.cert \
+  -key playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.key
+  -CAfile playground/data/RED-ca-bundle.crt \
+```
+
+### problems 
+
+- Doesn't appear that client certificate is asked for from server even when run
+  with CERTS_REQUIRED.
+
+## wget
+
 ```bash
 wget \
-  --certificate RED-INTERMEDIATE_ALPHA-CLIENT.cert \
-  --private-key RED-INTERMEDIATE_ALPHA-CLIENT.key \
-  --ca-certificate RED-ca-bundle.crt \
+  --certificate playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.cert \
+  --private-key playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.key \
+  --ca-certificate playground/data/RED-ca-bundle.crt \
   --no-check-certificate \
   https://0.0.0.0:8000/debug
 ```
 
-# todo
+### problems
 
-- Figure out why so many programs are failing to verify the certificates that
-  the bin/generate-identites tool creates. They fail for very HTTP-centric
-  reasons so far, viz., common name doesn't match host name.
+- Current certificates do not pass `wget` validation.
 
+## curl
+
+```curl
+curl \
+  --cacert playground/data/RED-ca-bundle.crt \
+  --cert playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.cert \
+  --key playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.key \
+  https://0.0.0.0:8000/debug
+```
+
+### problems
+
+- Current certificates do not pass `curl` validation.
