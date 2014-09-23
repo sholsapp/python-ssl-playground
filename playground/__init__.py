@@ -14,16 +14,16 @@ def index():
 
 @app.route('/debug')
 def debug():
-    s = request.environ['gunicorn.socket']
-    print 'Is secure: %s' % request.is_secure
-    print 'Cert reqs: %s' % s.cert_reqs
-    print 'SSL version: %s' % s.ssl_version
-    print 'Cert file: %s' % s.certfile
-    print 'Cert key: %s' % s.keyfile
-    print 'Peer cert: %s' % s.getpeercert()
-    return jsonify({
-      'peer': s.getpeercert(),
-    })
+  s = request.environ['gunicorn.socket']
+  print 'flask.request.is_secure = [%s]' % request.is_secure
+  print 'flask.request.environ["gunicorn.socket"].cert_reqs = [%s]' % s.cert_reqs
+  print 'flask.request.environ["gunicorn.socket"].ssl_version = [%s]' % s.ssl_version
+  print 'flask.request.environ["gunicorn.socket"].certfile = [%s]' % s.certfile
+  print 'flask.request.environ["gunicorn.socket"].keyfile = [%s]' % s.keyfile
+  print 'flask.request.environ["gunicorn.socket"].getpeercert() = [%s]' % s.getpeercert()
+  return jsonify({
+    'peer': s.getpeercert(),
+  })
 
 
 if __name__ == '__main__':
