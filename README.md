@@ -38,11 +38,6 @@ certificate to be requested. To do this, type the following into the prompt.
 GET /debug HTTP/1.1
 ```
 
-### problems 
-
-- None -- works perfectly.
-
-
 ## wget
 
 ```bash
@@ -60,7 +55,7 @@ wget \
 
 ## curl
 
-```curl
+```bash
 curl \
   --cacert playground/data/RED-ca-bundle.crt \
   --cert playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.cert \
@@ -71,3 +66,16 @@ curl \
 ### problems
 
 - Current certificates do not pass `curl` validation.
+
+## requests
+
+See a complete example in bin/requests.
+
+```python
+  trust_store = get_data_file('RED-ca-bundle.crt')
+  client_cert = get_data_file('RED-INTERMEDIATE_ALPHA-CLIENT.cert')
+  client_key = get_data_file('RED-INTERMEDIATE_ALPHA-CLIENT.key')
+  rsp = requests.get('https://0.0.0.0:8000/debug',
+      cert=(client_cert, client_key),
+      verify=trust_store)
+```
