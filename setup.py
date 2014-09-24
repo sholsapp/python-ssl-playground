@@ -25,6 +25,7 @@ setup(
     'python-dateutil',
     'pyOpenSSL',
     'pytest',
+    'py509',
     'tabulate',
   ],
 )

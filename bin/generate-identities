@@ -22,12 +22,16 @@ import argparse
 import logging
 import os
 
-from bishop.x509 import make_certificate_authority, make_certificate_signing_request, make_certificate, make_pkey, make_serial
+from py509.x509 import make_certificate_authority, make_certificate_signing_request, make_certificate, make_pkey, make_serial
 from OpenSSL import crypto
 
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
+
+
+NOW = 0
+TEN_YEARS = 10 * 365 * 24 * 60 * 60
 
 
 def write_key(path, name, obj):
@@ -49,7 +53,7 @@ def make_tls_chain(path, dry_run, chain_name):
 
   root = '%s-ROOT' % chain_name
   root_key, root_cert = make_certificate_authority(CN=root)
-  log.info('Made [%s] serial [%s]', root, root_cert.get_subject())
+  log.info('Made [%s] subject [%s]', root, root_cert.get_subject())
 
   if not dry_run:
     write_key(path, root, root_key)
@@ -61,39 +65,44 @@ def make_tls_chain(path, dry_run, chain_name):
 
     intermediate_key = make_pkey(key_bits=1024)
     int_csr = make_certificate_signing_request(intermediate_key, CN=intermediate, OU=intermediate)
-    intermediate_cert = make_certificate(int_csr, root_key, root_cert, make_serial(), 0, 10 * 365 * 24 * 60 * 60, exts=[crypto.X509Extension('basicConstraints', True, 'CA:TRUE')])
+    intermediate_cert = make_certificate(int_csr, root_key, root_cert,
+                                         make_serial(), NOW, TEN_YEARS,
+                                         exts=[crypto.X509Extension('basicConstraints', True, 'CA:TRUE')])
     if not dry_run:
       write_key(path, intermediate, intermediate_key)
       write_cert(path, intermediate, intermediate_cert)
     intermediates.append(intermediate_cert)
-    log.info('Made [%s] serial [%s] from [%s]', intermediate, intermediate_cert.get_subject(), root_cert.get_subject())
+    log.info('Made [%s] subject [%s] from [%s]', intermediate, intermediate_cert.get_subject(), root_cert.get_subject())
 
     server = '%s-SERVER' % intermediate
     server_key = make_pkey(key_bits=1024)
     server_csr = make_certificate_signing_request(server_key, CN='0.0.0.0', OU=server)
-    server_cert = make_certificate(server_csr, intermediate_key, intermediate_cert, make_serial(), 0, 10 * 365 * 24 * 60 * 60)
+    server_cert = make_certificate(server_csr, intermediate_key, intermediate_cert,
+                                   make_serial(), NOW, TEN_YEARS,
+                                   exts=[crypto.X509Extension('subjectAltName', True, 'IP:192.168.0.1,URI:i-am-a-server')])
     if not dry_run:
       write_key(path, server, server_key)
       write_cert(path, server, server_cert)
-    log.info('Made [%s] serial [%s] from [%s]', server, server_cert.get_subject(), intermediate_cert.get_subject())
+    log.info('Made [%s] subject [%s] from [%s]', server, server_cert.get_subject(), intermediate_cert.get_subject())
 
     client = '%s-CLIENT' % intermediate
     client_key = make_pkey(key_bits=1024)
     client_csr = make_certificate_signing_request(client_key, CN='0.0.0.0', OU=client)
-    client_cert = make_certificate(client_csr, intermediate_key, intermediate_cert, make_serial(), 0, 10 * 365 * 24 * 60 * 60)
+    client_cert = make_certificate(client_csr, intermediate_key, intermediate_cert,
+                                   make_serial(), NOW, TEN_YEARS,
+                                   exts=[crypto.X509Extension('subjectAltName', True, 'IP:192.168.0.2,URI:i-am-a-client')])
     if not dry_run:
       write_key(path, client, client_key)
       write_cert(path, client, client_cert)
-    log.info('Made [%s] serial [%s] from [%s]', client, client_cert.get_subject(), intermediate_cert.get_subject())
+    log.info('Made [%s] subject [%s] from [%s]', client, client_cert.get_subject(), intermediate_cert.get_subject())
 
   if not dry_run:
     write_trust(path, chain_name, root_cert, *intermediates)
 
 
-
 def main():
 
-  parser = argparse.ArgumentParser(description=__doc__)
+  parser = argparse.ArgumentParser(description="Generate sample certificates for a fake public key infrastructure.")
   parser.add_argument('-o', '--output' , default=os.getcwd())
   parser.add_argument('-d', '--dry-run', action='store_true')
   args = parser.parse_args()
