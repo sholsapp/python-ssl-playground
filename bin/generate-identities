@@ -103,8 +103,8 @@ def make_tls_chain(path, dry_run, chain_name):
 def main():
 
   parser = argparse.ArgumentParser(description="Generate sample certificates for a fake public key infrastructure.")
-  parser.add_argument('-o', '--output' , default=os.getcwd())
-  parser.add_argument('-d', '--dry-run', action='store_true')
+  parser.add_argument('-o', '--output' , default=os.getcwd(), help='The output directory to place generated files.')
+  parser.add_argument('-d', '--dry-run', action='store_true', help='Should generated files be written to disk?')
   args = parser.parse_args()
 
   for color in ['RED', 'BLUE']:
