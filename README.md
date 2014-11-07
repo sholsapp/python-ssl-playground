@@ -57,7 +57,7 @@ wget \
 
 ```bash
 curl \
-  --cacert playground/data/RED-ca-bundle.crt \
+  --cacert playground/data/RED-ROOT-CA.cert \
   --cert playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.cert \
   --key playground/data/RED-INTERMEDIATE_ALPHA-CLIENT.key \
   https://0.0.0.0:8000/debug
@@ -65,7 +65,7 @@ curl \
 
 ### problems
 
-- Current certificates do not pass `curl` validation.
+- Can't specify a certificate bundle to `curl`.
 
 ## requests
 
