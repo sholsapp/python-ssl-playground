@@ -17,6 +17,7 @@ setup(
   url='http://www.google.com',
   packages=['playground'],
   install_requires=[
+    'argparse',
     'Flask',
     'Flask-Script',
     'gunicorn',
@@ -26,6 +27,7 @@ setup(
     'pyOpenSSL',
     'pytest',
     'py509',
+    'requests',
     'tabulate',
   ],
 )
